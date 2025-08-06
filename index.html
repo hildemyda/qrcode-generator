@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="box">
+        <div class="qr-header">
+            <h1>QR Code Generator</h1>
+            <div class="message-box" id="messageBox"></div>
+
+            <div class="input-group">
+                <label for="qrTypeSelect">Pilih Jenis QR Code:</label>
+                <select id="qrTypeSelect">
+                    <option value="text-url">Teks/URL</option>
+                    <option value="wifi">Wi-Fi</option>
+                    <option value="phone">Telepon</option>
+                    <option value="contact">Kontak</option>
+                    <option value="geo">Lokasi</option>
+                    <option value="sms">SMS</option>
+                    <option value="email">Email</option>
+                    <option value="whatsapp">WhatsApp</option>
+                    <option value="instagram">Instagram</option>
+                </select>
+            </div>
+
+            <div id="textUrlInput" class="qr-type-input-group">
+                <label for="qr-text">Teks atau URL:</label>
+                <input type="text" placeholder="Ketik teks atau URL Anda" id="qr-text">
+            </div>
+
+            <div id="wifiInput" class="qr-type-input-group hidden">
+                <label for="wifi-ssid">SSID (Nama Jaringan):</label>
+                <input type="text" placeholder="Nama Jaringan Wi-Fi" id="wifi-ssid">
+                <label for="wifi-password">Kata Sandi:</label>
+                <input type="text" placeholder="Kata Sandi Wi-Fi (kosong jika tidak ada)" id="wifi-password">
+                <label for="wifi-encryption">Jenis Enkripsi:</label>
+                <select id="wifi-encryption">
+                    <option value="WPA">WPA/WPA2</option>
+                    <option value="WEP">WEP</option>
+                    <option value="nopass">Tidak Ada (Open)</option>
+                </select>
+            </div>
+
+            <div id="phoneInput" class="qr-type-input-group hidden">
+                <label for="phone-number">Nomor Telepon:</label>
+                <input type="text" placeholder="Contoh: +6281234567890" id="phone-number">
+            </div>
+
+            <div id="contactInput" class="qr-type-input-group hidden">
+                <label for="contact-name">Nama Lengkap:</label>
+                <input type="text" placeholder="Nama Depan Nama Belakang" id="contact-name">
+                <label for="contact-phone">Nomor Telepon:</label>
+                <input type="text" placeholder="Contoh: +6281234567890" id="contact-phone">
+                <label for="contact-email">Email:</label>
+                <input type="text" placeholder="email@contoh.com" id="contact-email">
+            </div>
+
+            <div id="geoInput" class="qr-type-input-group hidden">
+                <label for="geo-latitude">Lintang (Latitude):</label>
+                <input type="text" placeholder="Contoh: -6.2088" id="geo-latitude">
+                <label for="geo-longitude">Bujur (Longitude):</label>
+                <input type="text" placeholder="Contoh: 106.8456" id="geo-longitude">
+                <label for="geo-altitude">Ketinggian (opsional):</label>
+                <input type="text" placeholder="Contoh: 100 (meter)" id="geo-altitude">
+            </div>
+
+            <div id="smsInput" class="qr-type-input-group hidden">
+                <label for="sms-number">Nomor Penerima:</label>
+                <input type="text" placeholder="Nomor Telepon Penerima" id="sms-number">
+                <label for="sms-message">Pesan SMS:</label>
+                <textarea placeholder="Ketik pesan SMS Anda" id="sms-message" rows="3"></textarea>
+            </div>
+
+            <div id="emailInput" class="qr-type-input-group hidden">
+                <label for="email-to">Kepada (Email Penerima):</label>
+                <input type="text" placeholder="email@contoh.com" id="email-to">
+                <label for="email-subject">Subjek:</label>
+                <input type="text" placeholder="Subjek Email" id="email-subject">
+                <label for="email-body">Isi Pesan:</label>
+                <textarea placeholder="Ketik isi pesan email Anda" id="email-body" rows="3"></textarea>
+            </div>
+
+            <div id="whatsappInput" class="qr-type-input-group hidden">
+                <label for="whatsapp-number">Nomor WhatsApp (dengan kode negara, tanpa +):</label>
+                <input type="text" placeholder="Contoh: 6281234567890" id="whatsapp-number">
+                <label for="whatsapp-message">Pesan WhatsApp (opsional):</label>
+                <textarea placeholder="Ketik pesan yang akan dikirim" id="whatsapp-message" rows="3"></textarea>
+            </div>
+
+            <div id="instagramInput" class="qr-type-input-group hidden">
+                <label for="instagram-username">Nama Pengguna Instagram:</label>
+                <input type="text" placeholder="Contoh: namapenggunaanda" id="instagram-username">
+            </div>
+
+
+            <div class="input-group">
+                <label for="sizes">Pilih Ukuran:</label>
+                <select id="sizes">
+                    <option value="100">100px</option>
+                    <option value="500" selected>500px</option>
+                    <option value="1000">1000px</option>
+                    <option value="3000">3000px</option>
+                    <option value="5000">5000px</option>
+                    <option value="10000">10000px</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="colorDark">Warna Barcode:</label>
+                <input type="color" id="colorDark" value="#000000">
+            </div>
+
+            <div class="input-group">
+                <label for="backgroundTypeSelect">Jenis Latar Belakang:</label>
+                <select id="backgroundTypeSelect">
+                    <option value="colored">Berwarna</option>
+                    <option value="transparent" selected>Transparan</option>
+                </select>
+            </div>
+
+            <div class="input-group" id="backgroundColorPicker" style="display: none;">
+                <label for="colorLight">Warna Latar Belakang:</label>
+                <input type="color" id="colorLight" value="#ffffff">
+            </div>
+        </div>
+
+        <div class="qr-body">
+            <!-- QR Code akan dihasilkan di sini -->
+        </div>
+
+        <div class="qr-footer">
+            <a href="#" id="generateBtn">Hasilkan</a>
+            <a href="#" id="downloadBtn" download="QR_Code.png" class="hidden">Unduh</a>
+        </div>
+    </div>
+
+    <!-- Link ke file JavaScript eksternal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
