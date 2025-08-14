@@ -5,7 +5,271 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* CSS Variables */
+        :root {
+            --bg-color-body: #f3f4f6;
+            --primary-bg-color: #ffffff;
+            --text-dark: #1f2937;
+            --text-medium: #374151;
+            --border-color-light: #D1D5DB;
+            --focus-border-color: #3b82f6;
+            --button-primary-bg: #1f2937;
+            --button-primary-hover-bg: #374151;
+            --button-secondary-bg: #2563eb;
+            --button-secondary-hover-bg: #1d4ed8;
+            --button-text-color: #ffffff;
+            --error-bg: #fee2e2;
+            --error-text: #ef4444;
+            --border-radius-sm: 0.5rem;
+            --border-radius-md: 0.75rem;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Body Styles */
+        body {
+            background-color: var(--bg-color-body);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        /* Main Box Styles */
+        .box {
+            background-color: var(--primary-bg-color);
+            padding: 2rem;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 28rem;
+            animation: fadeIn 1s ease;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header Styles */
+        .qr-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .qr-header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+
+        /* Input and Select Styles */
+        .qr-header input[type="text"],
+        .qr-header select,
+        .qr-header textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color-light);
+            border-radius: var(--border-radius-sm);
+            font-size: 1.125rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        /* Specific style for multiline text input */
+        .qr-header textarea {
+            font-size: 0.875rem; /* Ukuran font lebih kecil seperti yang diminta */
+            white-space: pre; /* Mencegah pembungkus kata */
+            overflow: auto; /* Memungkinkan scroll jika teks terlalu panjang */
+            resize: vertical; /* Hanya izinkan resize vertikal */
+        }
+
+
+        .qr-header input[type="text"]:focus,
+        .qr-header select:focus,
+        .qr-header textarea:focus {
+            border-color: var(--focus-border-color);
+        }
+
+        /* Color Input Styles */
+        .qr-header input[type="color"] {
+            width: 100%;
+            height: 2.5rem;
+            padding: 0.25rem;
+            border: 1px solid var(--border-color-light);
+            border-radius: var(--border-radius-sm);
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .qr-header input[type="color"]:focus {
+            border-color: var(--focus-border-color);
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: var(--border-radius-sm);
+        }
+
+        /* Label Styles */
+        .qr-header label {
+            color: var(--text-medium);
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* Input Group (for responsiveness) */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        /* Media query for larger screens */
+        @media (min-width: 640px) {
+            .input-group {
+                flex-direction: row;
+                align-items: center;
+            }
+            .input-group label {
+                margin-bottom: 0;
+                margin-right: 1rem;
+            }
+            .qr-header select {
+                width: auto;
+            }
+            .qr-header input[type="color"] {
+                width: 6rem;
+            }
+        }
+
+        /* QR Code Area */
+        .qr-body {
+            display: grid;
+            place-items: center;
+            padding: 1.25rem;
+        }
+
+        /* Styles for canvas and img elements inside qr-body */
+        .qr-body canvas,
+        .qr-body img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-block: 10px;
+            padding: 20px;
+            border: 1px solid var(--border-color-light);
+            border-radius: var(--border-radius-sm);
+            transition: border-color 0.3s ease;
+        }
+
+        /* Hover style for canvas/img */
+        .qr-body canvas:hover,
+        .qr-body img:hover {
+            border-color: var(--focus-border-color);
+        }
+
+        /* Footer with buttons */
+        .qr-footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+            gap: 1rem;
+        }
+
+        /* Button Styles */
+        .qr-footer a {
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: var(--border-radius-sm);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--shadow-md);
+            white-space: nowrap;
+        }
+
+        #generateBtn {
+            background-color: var(--button-primary-bg);
+            color: var(--button-text-color);
+        }
+
+        #generateBtn:hover {
+            background-color: var(--button-primary-hover-bg);
+            box-shadow: var(--shadow-lg);
+        }
+
+        #downloadBtn {
+            background-color: var(--button-secondary-bg);
+            color: var(--button-text-color);
+        }
+
+        #downloadBtn:hover {
+            background-color: var(--button-secondary-hover-bg);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Message Box Styles */
+        .message-box {
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            padding: 0.75rem;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        /* Utility classes */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Styles for specific input sections */
+        .qr-type-input-group {
+            border: 1px solid var(--border-color-light);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        .qr-type-input-group label {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        .qr-type-input-group input[type="text"],
+        .qr-type-input-group select,
+        .qr-type-input-group textarea {
+            margin-bottom: 0.75rem;
+        }
+    </style>
 </head>
 <body>
     <div class="box">
@@ -30,7 +294,8 @@
 
             <div id="textUrlInput" class="qr-type-input-group">
                 <label for="qr-text">Teks atau URL:</label>
-                <input type="text" placeholder="Ketik teks atau URL Anda" id="qr-text">
+                <!-- Dibuat lebih kecil dan tanpa pembungkus kata (word wrap) -->
+                <textarea placeholder="Ketik teks atau URL Anda" id="qr-text" rows="5"></textarea>
             </div>
 
             <div id="wifiInput" class="qr-type-input-group hidden">
@@ -134,13 +399,416 @@
         </div>
 
         <div class="qr-footer">
-            <a href="#" id="generateBtn">Hasilkan</a>
-            <a href="#" id="downloadBtn" download="QR_Code.png" class="hidden">Unduh</a>
+            <!-- Tombol 'Hasilkan' sekarang disembunyikan secara default -->
+            <a href="#" id="generateBtn" class="hidden">Buat QRCODE</a>
+            <a href="#" id="downloadBtn" download="QR_Code.png" class="hidden">Donlot</a>
         </div>
     </div>
 
-    <!-- Link ke file JavaScript eksternal -->
+    <!-- Link to external JavaScript file -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="main.js"></script>
+    <script>
+        const qrText = document.getElementById('qr-text');
+        const sizes = document.getElementById('sizes');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const qrContainer = document.querySelector('.qr-body');
+        const colorDarkInput = document.getElementById('colorDark');
+        const colorLightInput = document.getElementById('colorLight');
+        const backgroundColorPicker = document.getElementById('backgroundColorPicker');
+        const messageBox = document.getElementById('messageBox');
+
+        // Elements for QR type selection (select dropdown)
+        const qrTypeSelect = document.getElementById('qrTypeSelect');
+        const textUrlInputDiv = document.getElementById('textUrlInput');
+        const wifiInputDiv = document.getElementById('wifiInput');
+        const phoneInputDiv = document.getElementById('phoneInput');
+        const contactInputDiv = document.getElementById('contactInput');
+        const geoInputDiv = document.getElementById('geoInput');
+        const smsInputDiv = document.getElementById('smsInput');
+        const emailInputDiv = document.getElementById('emailInput');
+        const whatsappInputDiv = document.getElementById('whatsappInput');
+        const instagramInputDiv = document.getElementById('instagramInput');
+
+        // Elements for Background type selection (new select dropdown)
+        const backgroundTypeSelect = document.getElementById('backgroundTypeSelect');
+
+        // Wi-Fi specific inputs
+        const wifiSsid = document.getElementById('wifi-ssid');
+        const wifiPassword = document.getElementById('wifi-password');
+        const wifiEncryption = document.getElementById('wifi-encryption');
+
+        // Phone specific inputs
+        const phoneNumber = document.getElementById('phone-number');
+
+        // Contact specific inputs
+        const contactName = document.getElementById('contact-name');
+        const contactPhone = document.getElementById('contact-phone');
+        const contactEmail = document.getElementById('contact-email');
+
+        // GEO specific inputs
+        const geoLatitude = document.getElementById('geo-latitude');
+        const geoLongitude = document.getElementById('geo-longitude');
+        const geoAltitude = document.getElementById('geo-altitude');
+
+        // SMS specific inputs
+        const smsNumber = document.getElementById('sms-number');
+        const smsMessage = document.getElementById('sms-message');
+
+        // Email specific inputs
+        const emailTo = document.getElementById('email-to');
+        const emailSubject = document.getElementById('email-subject');
+        const emailBody = document.getElementById('email-body');
+
+        // WhatsApp specific inputs
+        const whatsappNumber = document.getElementById('whatsapp-number');
+        const whatsappMessage = document.getElementById('whatsapp-message');
+
+        // Instagram specific input
+        const instagramUsername = document.getElementById('instagram-username');
+
+
+        let size = sizes.value;
+        let colorDark = colorDarkInput.value;
+        let colorLight;
+        let currentQrType = qrTypeSelect.value;
+        let currentBackgroundType = backgroundTypeSelect.value;
+
+        // Set initial colorLight based on default background type
+        if (currentBackgroundType === 'transparent') {
+            colorLight = "#ffffff00";
+        } else {
+            colorLight = colorLightInput.value;
+        }
+
+        // Function to display messages in the UI
+        function showMessage(message, type = 'error') {
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+            if (type === 'error') {
+                messageBox.className = 'message-box error-style';
+            } else {
+                messageBox.className = 'message-box success-style';
+            }
+            // Hide message after 3 seconds
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
+        }
+
+        // Function to switch input fields based on QR type selection
+        function switchQrTypeInputs() {
+            textUrlInputDiv.classList.add('hidden');
+            wifiInputDiv.classList.add('hidden');
+            phoneInputDiv.classList.add('hidden');
+            contactInputDiv.classList.add('hidden');
+            geoInputDiv.classList.add('hidden');
+            smsInputDiv.classList.add('hidden');
+            emailInputDiv.classList.add('hidden');
+            whatsappInputDiv.classList.add('hidden');
+            instagramInputDiv.classList.add('hidden');
+
+            if (currentQrType === 'text-url') {
+                textUrlInputDiv.classList.remove('hidden');
+            } else if (currentQrType === 'wifi') {
+                wifiInputDiv.classList.remove('hidden');
+            } else if (currentQrType === 'phone') {
+                phoneInputDiv.classList.remove('hidden');
+            } else if (currentQrType === 'contact') {
+                contactInputDiv.classList.remove('hidden');
+            } else if (currentQrType === 'geo') {
+                geoInputDiv.classList.remove('hidden');
+            } else if (currentQrType === 'sms') {
+                smsInputDiv.classList.remove('hidden');
+            } else if (currentQrType === 'email') {
+                emailInputDiv.classList.remove('hidden');
+            } else if (currentQrType === 'whatsapp') {
+                whatsappInputDiv.classList.remove('hidden');
+            } else if (currentQrType === 'instagram') {
+                instagramInputDiv.classList.remove('hidden');
+            }
+            
+            // Clear previous QR code, hide download button, dan perbarui status tombol 'Hasilkan'
+            qrContainer.innerHTML = "";
+            downloadBtn.classList.add('hidden');
+            checkInputAndToggleGenerateButton();
+        }
+
+        // Function to check the input fields and toggle the 'Generate' button
+        function checkInputAndToggleGenerateButton() {
+            let hasInput = false;
+            // Periksa input yang sesuai dengan jenis QR Code yang sedang aktif
+            if (currentQrType === 'text-url' && qrText.value.trim().length > 0) {
+                hasInput = true;
+            } else if (currentQrType === 'wifi' && wifiSsid.value.trim().length > 0) {
+                hasInput = true;
+            } else if (currentQrType === 'phone' && phoneNumber.value.trim().length > 0) {
+                hasInput = true;
+            } else if (currentQrType === 'contact' && (contactName.value.trim().length > 0 || contactPhone.value.trim().length > 0 || contactEmail.value.trim().length > 0)) {
+                hasInput = true;
+            } else if (currentQrType === 'geo' && (geoLatitude.value.trim().length > 0 || geoLongitude.value.trim().length > 0)) {
+                hasInput = true;
+            } else if (currentQrType === 'sms' && smsNumber.value.trim().length > 0) {
+                hasInput = true;
+            } else if (currentQrType === 'email' && emailTo.value.trim().length > 0) {
+                hasInput = true;
+            } else if (currentQrType === 'whatsapp' && whatsappNumber.value.trim().length > 0) {
+                hasInput = true;
+            } else if (currentQrType === 'instagram' && instagramUsername.value.trim().length > 0) {
+                hasInput = true;
+            }
+
+            if (hasInput) {
+                generateBtn.classList.remove('hidden');
+            } else {
+                generateBtn.classList.add('hidden');
+            }
+        }
+
+
+        // Add event listeners for QR type select dropdown
+        qrTypeSelect.addEventListener('change', (e) => {
+            currentQrType = e.target.value;
+            switchQrTypeInputs();
+        });
+
+        // Event listener for background type select dropdown
+        backgroundTypeSelect.addEventListener('change', (e) => {
+            currentBackgroundType = e.target.value;
+            if (currentBackgroundType === 'colored') {
+                backgroundColorPicker.style.display = 'flex';
+                colorLight = colorLightInput.value;
+            } else { // transparent
+                backgroundColorPicker.style.display = 'none';
+                colorLight = "#ffffff00";
+            }
+        });
+
+        // Event listener for generate button
+        generateBtn.addEventListener('click',(e)=>{
+            e.preventDefault();
+            generateQrCodeBasedOnType();
+        });
+
+        // Event listener for size change
+        sizes.addEventListener('change',(e)=>{
+            size = e.target.value;
+        });
+
+        // Event listener for dark color change
+        colorDarkInput.addEventListener('change',(e)=>{
+            colorDark = e.target.value;
+        });
+
+        // Event listener for light color change (background)
+        colorLightInput.addEventListener('change',(e)=>{
+            colorLight = e.target.value;
+        });
+
+        // Function to get current date in YYYY-MM-DD format
+        function getCurrentDateFormatted() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Event listener for download button
+        downloadBtn.addEventListener('click', ()=>{
+            let img = document.querySelector('.qr-body img');
+            const date = getCurrentDateFormatted();
+            const filename = `hasil-download-${date}.png`;
+
+            if(img !== null){
+                let imgAtrr = img.getAttribute('src');
+                downloadBtn.setAttribute("href", imgAtrr);
+                downloadBtn.setAttribute("download", filename);
+            }
+            else{
+                const canvas = document.querySelector('canvas');
+                if (canvas) {
+                    downloadBtn.setAttribute("href", canvas.toDataURL());
+                    downloadBtn.setAttribute("download", filename);
+                } else {
+                    showMessage("Harap hasilkan kode QR terlebih dahulu.");
+                    downloadBtn.removeAttribute("href");
+                    downloadBtn.removeAttribute("download");
+                }
+            }
+
+            // Hapus QR code dan sembunyikan tombol unduh setelah diunduh
+            setTimeout(() => {
+                qrContainer.innerHTML = "";
+                downloadBtn.classList.add('hidden');
+                checkInputAndToggleGenerateButton();
+            }, 100);
+        });
+
+        // Main function to generate QR code based on selected type
+        function generateQrCodeBasedOnType() {
+            let qrData = '';
+            let isInputValid = true;
+
+            // Hide any previous messages
+            messageBox.style.display = 'none';
+
+            if (currentQrType === 'text-url') {
+                // Get the value from the textarea and sanitize it
+                const rawData = qrText.value;
+                // Hapus karakter non-ASCII dan spasi di awal/akhir
+                qrData = rawData.replace(/[^\x20-\x7E\s]/g, '').trim();
+
+                if (qrData.length === 0) {
+                    showMessage("Masukkan teks atau URL yang valid untuk menghasilkan kode QR Anda.");
+                    isInputValid = false;
+                }
+            } else if (currentQrType === 'wifi') {
+                const ssid = wifiSsid.value;
+                const pass = wifiPassword.value;
+                const encryption = wifiEncryption.value;
+
+                if (ssid.length === 0) {
+                    showMessage("SSID Wi-Fi tidak boleh kosong.");
+                    isInputValid = false;
+                } else {
+                    qrData = `WIFI:S:${ssid};T:${encryption};P:${pass};;`;
+                }
+            } else if (currentQrType === 'phone') {
+                const phoneNum = phoneNumber.value;
+                if (phoneNum.length === 0) {
+                    showMessage("Nomor telepon tidak boleh kosong.");
+                    isInputValid = false;
+                } else {
+                    qrData = `tel:${phoneNum}`;
+                }
+            } else if (currentQrType === 'contact') {
+                const name = contactName.value;
+                const phone = contactPhone.value;
+                const email = contactEmail.value;
+
+                if (name.length === 0 && phone.length === 0 && email.length === 0) {
+                    showMessage("Setidaknya satu bidang kontak (Nama, Telepon, Email) harus diisi.");
+                    isInputValid = false;
+                } else {
+                    qrData = `BEGIN:VCARD\nVERSION:3.0\n`;
+                    if (name) qrData += `FN:${name}\nN:${name.split(' ').reverse().join(';')}\n`;
+                    if (phone) qrData += `TEL:${phone}\n`;
+                    if (email) qrData += `EMAIL:${email}\n`;
+                    qrData += `END:VCARD`;
+                }
+            } else if (currentQrType === 'geo') {
+                const latitude = geoLatitude.value;
+                const longitude = geoLongitude.value;
+                const altitude = geoAltitude.value;
+
+                if (latitude.length === 0 || longitude.length === 0) {
+                    showMessage("Lintang dan Bujur tidak boleh kosong untuk lokasi.");
+                    isInputValid = false;
+                } else {
+                    qrData = `geo:${latitude},${longitude}`;
+                    if (altitude.length > 0) {
+                        qrData += `,${altitude}`;
+                    }
+                }
+            } else if (currentQrType === 'sms') {
+                const smsNum = smsNumber.value;
+                const smsMsg = smsMessage.value;
+
+                if (smsNum.length === 0) {
+                    showMessage("Nomor penerima SMS tidak boleh kosong.");
+                    isInputValid = false;
+                } else {
+                    qrData = `SMSTO:${smsNum}:${smsMsg}`;
+                }
+            } else if (currentQrType === 'email') {
+                const emailToAddr = emailTo.value;
+                const emailSubj = encodeURIComponent(emailSubject.value);
+                const emailBodyMsg = encodeURIComponent(emailBody.value);
+
+                if (emailToAddr.length === 0) {
+                    showMessage("Alamat email penerima tidak boleh kosong.");
+                    isInputValid = false;
+                } else {
+                    qrData = `mailto:${emailToAddr}`;
+                    if (emailSubj.length > 0 || emailBodyMsg.length > 0) {
+                        qrData += `?`;
+                        if (emailSubj.length > 0) {
+                            qrData += `subject=${emailSubj}`;
+                        }
+                        if (emailBodyMsg.length > 0) {
+                            if (emailSubj.length > 0) qrData += `&`;
+                            qrData += `body=${emailBodyMsg}`;
+                        }
+                    }
+                }
+            } else if (currentQrType === 'whatsapp') {
+                const waNum = whatsappNumber.value;
+                const waMsg = encodeURIComponent(whatsappMessage.value);
+
+                if (waNum.length === 0) {
+                    showMessage("Nomor WhatsApp tidak boleh kosong.");
+                    isInputValid = false;
+                } else {
+                    qrData = `https://wa.me/${waNum}`;
+                    if (waMsg.length > 0) {
+                        qrData += `?text=${waMsg}`;
+                    }
+                }
+            } else if (currentQrType === 'instagram') {
+                const igUsername = instagramUsername.value;
+                if (igUsername.length === 0) {
+                    showMessage("Nama pengguna Instagram tidak boleh kosong.");
+                    isInputValid = false;
+                } else {
+                    qrData = `https://www.instagram.com/${igUsername}`;
+                }
+            }
+
+
+            if (isInputValid && qrData.length > 0) {
+                qrContainer.innerHTML = "";
+                new QRCode(qrContainer, {
+                    text: qrData,
+                    height: size,
+                    width: size,
+                    colorLight: colorLight,
+                    colorDark: colorDark,
+                });
+                downloadBtn.classList.remove('hidden');
+            } else {
+                qrContainer.innerHTML = "";
+                downloadBtn.classList.add('hidden');
+            }
+        }
+
+        // Initialize input fields visibility on load
+        switchQrTypeInputs();
+
+        // --- Perubahan Baru: Event Listeners untuk Toggle Tombol 'Hasilkan' ---
+
+        // Pasangkan event listener 'input' ke semua elemen input teks yang relevan
+        qrText.addEventListener('input', checkInputAndToggleGenerateButton);
+        wifiSsid.addEventListener('input', checkInputAndToggleGenerateButton);
+        wifiPassword.addEventListener('input', checkInputAndToggleGenerateButton);
+        phoneNumber.addEventListener('input', checkInputAndToggleGenerateButton);
+        contactName.addEventListener('input', checkInputAndToggleGenerateButton);
+        contactPhone.addEventListener('input', checkInputAndToggleGenerateButton);
+        contactEmail.addEventListener('input', checkInputAndToggleGenerateButton);
+        geoLatitude.addEventListener('input', checkInputAndToggleGenerateButton);
+        geoLongitude.addEventListener('input', checkInputAndToggleGenerateButton);
+        geoAltitude.addEventListener('input', checkInputAndToggleGenerateButton);
+        smsNumber.addEventListener('input', checkInputAndToggleGenerateButton);
+        smsMessage.addEventListener('input', checkInputAndToggleGenerateButton);
+        emailTo.addEventListener('input', checkInputAndToggleGenerateButton);
+        emailSubject.addEventListener('input', checkInputAndToggleGenerateButton);
+        emailBody.addEventListener('input', checkInputAndToggleGenerateButton);
+        whatsappNumber.addEventListener('input', checkInputAndToggleGenerateButton);
+        whatsappMessage.addEventListener('input', checkInputAndToggleGenerateButton);
+        instagramUsername.addEventListener('input', checkInputAndToggleGenerateButton);
+
+        // Panggil fungsi ini saat halaman dimuat untuk memastikan status tombol yang benar
+        checkInputAndToggleGenerateButton();
+    </script>
 </body>
 </html>
