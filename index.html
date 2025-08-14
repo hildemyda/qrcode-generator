@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator</title>
+    <link rel="icon" href="./file/image.png" type="image/png">
     <style>
-        /* CSS Variables */
         :root {
             --bg-color-body: #f3f4f6;
             --primary-bg-color: #ffffff;
@@ -27,7 +27,6 @@
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
-        /* Basic Reset */
         * {
             margin: 0;
             padding: 0;
@@ -35,7 +34,6 @@
             font-family: 'Inter', sans-serif;
         }
 
-        /* Body Styles */
         body {
             background-color: var(--bg-color-body);
             display: flex;
@@ -45,7 +43,6 @@
             padding: 1rem;
         }
 
-        /* Main Box Styles */
         .box {
             background-color: var(--primary-bg-color);
             padding: 2rem;
@@ -53,22 +50,8 @@
             box-shadow: var(--shadow-lg);
             width: 100%;
             max-width: 28rem;
-            animation: fadeIn 1s ease;
         }
 
-        /* Fade-in Animation */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Header Styles */
         .qr-header {
             text-align: center;
             margin-bottom: 1.5rem;
@@ -82,7 +65,6 @@
             text-transform: uppercase;
         }
 
-        /* Input and Select Styles */
         .qr-header input[type="text"],
         .qr-header select,
         .qr-header textarea {
@@ -93,17 +75,14 @@
             border-radius: var(--border-radius-sm);
             font-size: 1.125rem;
             outline: none;
-            transition: border-color 0.3s ease;
         }
 
-        /* Specific style for multiline text input */
         .qr-header textarea {
-            font-size: 0.875rem; /* Ukuran font lebih kecil seperti yang diminta */
-            white-space: pre; /* Mencegah pembungkus kata */
-            overflow: auto; /* Memungkinkan scroll jika teks terlalu panjang */
-            resize: vertical; /* Hanya izinkan resize vertikal */
+            font-size: 0.875rem;
+            white-space: pre;
+            overflow: auto;
+            resize: vertical;
         }
-
 
         .qr-header input[type="text"]:focus,
         .qr-header select:focus,
@@ -111,7 +90,6 @@
             border-color: var(--focus-border-color);
         }
 
-        /* Color Input Styles */
         .qr-header input[type="color"] {
             width: 100%;
             height: 2.5rem;
@@ -119,7 +97,6 @@
             border: 1px solid var(--border-color-light);
             border-radius: var(--border-radius-sm);
             outline: none;
-            transition: border-color 0.3s ease;
         }
 
         .qr-header input[type="color"]:focus {
@@ -134,7 +111,6 @@
             border-radius: var(--border-radius-sm);
         }
 
-        /* Label Styles */
         .qr-header label {
             color: var(--text-medium);
             font-size: 1.125rem;
@@ -142,7 +118,6 @@
             display: block;
         }
 
-        /* Input Group (for responsiveness) */
         .input-group {
             display: flex;
             flex-direction: column;
@@ -151,7 +126,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Media query for larger screens */
         @media (min-width: 640px) {
             .input-group {
                 flex-direction: row;
@@ -169,14 +143,12 @@
             }
         }
 
-        /* QR Code Area */
         .qr-body {
             display: grid;
             place-items: center;
             padding: 1.25rem;
         }
 
-        /* Styles for canvas and img elements inside qr-body */
         .qr-body canvas,
         .qr-body img {
             max-width: 100%;
@@ -186,30 +158,21 @@
             padding: 20px;
             border: 1px solid var(--border-color-light);
             border-radius: var(--border-radius-sm);
-            transition: border-color 0.3s ease;
         }
 
-        /* Hover style for canvas/img */
-        .qr-body canvas:hover,
-        .qr-body img:hover {
-            border-color: var(--focus-border-color);
-        }
-
-        /* Footer with buttons */
         .qr-footer {
             display: flex;
             justify-content: center;
             margin-top: 1.5rem;
             gap: 1rem;
+            flex-wrap: wrap;
         }
 
-        /* Button Styles */
         .qr-footer a {
             text-decoration: none;
             font-weight: 600;
             padding: 0.75rem 2rem;
             border-radius: var(--border-radius-sm);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
             box-shadow: var(--shadow-md);
             white-space: nowrap;
         }
@@ -234,7 +197,6 @@
             box-shadow: var(--shadow-lg);
         }
 
-        /* Message Box Styles */
         .message-box {
             background-color: var(--error-bg);
             color: var(--error-text);
@@ -247,12 +209,10 @@
             display: none;
         }
 
-        /* Utility classes */
         .hidden {
             display: none !important;
         }
 
-        /* Styles for specific input sections */
         .qr-type-input-group {
             border: 1px solid var(--border-color-light);
             border-radius: var(--border-radius-sm);
@@ -260,25 +220,55 @@
             margin-bottom: 1rem;
             text-align: left;
         }
+
         .qr-type-input-group label {
             font-size: 1rem;
             margin-bottom: 0.25rem;
         }
+
         .qr-type-input-group input[type="text"],
         .qr-type-input-group select,
         .qr-type-input-group textarea {
             margin-bottom: 0.75rem;
+        }
+
+        #advancedSettingsToggle {
+            cursor: pointer;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--button-primary-bg);
+            display: block;
+            font-size: 0.875rem;
+        }
+        #advancedSettingsToggle:hover {
+            color: var(--button-primary-hover-bg);
+        }
+        
+        #advancedSettingsToggle.advanced-open {
+            color: var(--focus-border-color);
+        }
+
+        #advancedSettings {
+            display: none;
+            overflow: hidden;
+        }
+
+        .watermark {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 1rem;
         }
     </style>
 </head>
 <body>
     <div class="box">
         <div class="qr-header">
-            <h1>QR Code Generator</h1>
+            <h1>Pembuat Kode QR</h1>
             <div class="message-box" id="messageBox"></div>
 
             <div class="input-group">
-                <label for="qrTypeSelect">Pilih Jenis QR Code:</label>
+                <label for="qrTypeSelect">Pilih Jenis Kode QR   :</label>
                 <select id="qrTypeSelect">
                     <option value="text-url">Teks/URL</option>
                     <option value="wifi">Wi-Fi</option>
@@ -294,7 +284,6 @@
 
             <div id="textUrlInput" class="qr-type-input-group">
                 <label for="qr-text">Teks atau URL:</label>
-                <!-- Dibuat lebih kecil dan tanpa pembungkus kata (word wrap) -->
                 <textarea placeholder="Ketik teks atau URL Anda" id="qr-text" rows="5"></textarea>
             </div>
 
@@ -362,50 +351,50 @@
                 <input type="text" placeholder="Contoh: namapenggunaanda" id="instagram-username">
             </div>
 
+            <div id="advancedSettingsToggle">Pengaturan Lanjutan</div>
+            <div id="advancedSettings">
+                <div class="input-group">
+                    <label for="sizes">Kualitas Gambar:</label>
+                    <select id="sizes">
+                        <option value="100">Terendah</option>
+                        <option value="500" selected>Rendah</option>
+                        <option value="1000">Sedang</option>
+                        <option value="3000">Tinggi</option>
+                        <option value="5000">Tertinggi</option>
+                        <option value="10000">Ultra</option>
+                    </select>
+                </div>
 
-            <div class="input-group">
-                <label for="sizes">Pilih Ukuran:</label>
-                <select id="sizes">
-                    <option value="100">100px</option>
-                    <option value="500" selected>500px</option>
-                    <option value="1000">1000px</option>
-                    <option value="3000">3000px</option>
-                    <option value="5000">5000px</option>
-                    <option value="10000">10000px</option>
-                </select>
-            </div>
+                <div class="input-group">
+                    <label for="colorDark">Warna Barcode:</label>
+                    <input type="color" id="colorDark" value="#000000">
+                </div>
 
-            <div class="input-group">
-                <label for="colorDark">Warna Barcode:</label>
-                <input type="color" id="colorDark" value="#000000">
-            </div>
+                <div class="input-group">
+                    <label for="backgroundTypeSelect">Jenis Latar Belakang:</label>
+                    <select id="backgroundTypeSelect">
+                        <option value="colored">Berwarna</option>
+                        <option value="transparent" selected>Transparan</option>
+                    </select>
+                </div>
 
-            <div class="input-group">
-                <label for="backgroundTypeSelect">Jenis Latar Belakang:</label>
-                <select id="backgroundTypeSelect">
-                    <option value="colored">Berwarna</option>
-                    <option value="transparent" selected>Transparan</option>
-                </select>
-            </div>
-
-            <div class="input-group" id="backgroundColorPicker" style="display: none;">
-                <label for="colorLight">Warna Latar Belakang:</label>
-                <input type="color" id="colorLight" value="#ffffff">
+                <div class="input-group" id="backgroundColorPicker" style="display: none;">
+                    <label for="colorLight">Warna Latar Belakang:</label>
+                    <input type="color" id="colorLight" value="#ffffff">
+                </div>
             </div>
         </div>
 
         <div class="qr-body">
-            <!-- QR Code akan dihasilkan di sini -->
         </div>
 
         <div class="qr-footer">
-            <!-- Tombol 'Hasilkan' sekarang disembunyikan secara default -->
-            <a href="#" id="generateBtn" class="hidden">Buat QRCODE</a>
-            <a href="#" id="downloadBtn" download="QR_Code.png" class="hidden">Donlot</a>
+            <a href="#" id="generateBtn">Hasilkan</a>
+            <a href="#" id="downloadBtn" download="qr-code.png" class="hidden">Unduh</a>
         </div>
+        <div class="watermark">@ 2025 Hildemyda</div>
     </div>
 
-    <!-- Link to external JavaScript file -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
         const qrText = document.getElementById('qr-text');
@@ -417,8 +406,9 @@
         const colorLightInput = document.getElementById('colorLight');
         const backgroundColorPicker = document.getElementById('backgroundColorPicker');
         const messageBox = document.getElementById('messageBox');
+        const advancedSettingsToggle = document.getElementById('advancedSettingsToggle');
+        const advancedSettings = document.getElementById('advancedSettings');
 
-        // Elements for QR type selection (select dropdown)
         const qrTypeSelect = document.getElementById('qrTypeSelect');
         const textUrlInputDiv = document.getElementById('textUrlInput');
         const wifiInputDiv = document.getElementById('wifiInput');
@@ -430,41 +420,32 @@
         const whatsappInputDiv = document.getElementById('whatsappInput');
         const instagramInputDiv = document.getElementById('instagramInput');
 
-        // Elements for Background type selection (new select dropdown)
         const backgroundTypeSelect = document.getElementById('backgroundTypeSelect');
 
-        // Wi-Fi specific inputs
         const wifiSsid = document.getElementById('wifi-ssid');
         const wifiPassword = document.getElementById('wifi-password');
         const wifiEncryption = document.getElementById('wifi-encryption');
 
-        // Phone specific inputs
         const phoneNumber = document.getElementById('phone-number');
 
-        // Contact specific inputs
         const contactName = document.getElementById('contact-name');
         const contactPhone = document.getElementById('contact-phone');
         const contactEmail = document.getElementById('contact-email');
 
-        // GEO specific inputs
         const geoLatitude = document.getElementById('geo-latitude');
         const geoLongitude = document.getElementById('geo-longitude');
         const geoAltitude = document.getElementById('geo-altitude');
 
-        // SMS specific inputs
         const smsNumber = document.getElementById('sms-number');
         const smsMessage = document.getElementById('sms-message');
 
-        // Email specific inputs
         const emailTo = document.getElementById('email-to');
         const emailSubject = document.getElementById('email-subject');
         const emailBody = document.getElementById('email-body');
 
-        // WhatsApp specific inputs
         const whatsappNumber = document.getElementById('whatsapp-number');
         const whatsappMessage = document.getElementById('whatsapp-message');
 
-        // Instagram specific input
         const instagramUsername = document.getElementById('instagram-username');
 
 
@@ -474,29 +455,27 @@
         let currentQrType = qrTypeSelect.value;
         let currentBackgroundType = backgroundTypeSelect.value;
 
-        // Set initial colorLight based on default background type
         if (currentBackgroundType === 'transparent') {
             colorLight = "#ffffff00";
         } else {
             colorLight = colorLightInput.value;
         }
 
-        // Function to display messages in the UI
-        function showMessage(message, type = 'error') {
+        function showMessage(message) {
             messageBox.textContent = message;
             messageBox.style.display = 'block';
-            if (type === 'error') {
-                messageBox.className = 'message-box error-style';
-            } else {
-                messageBox.className = 'message-box success-style';
-            }
-            // Hide message after 3 seconds
             setTimeout(() => {
                 messageBox.style.display = 'none';
             }, 3000);
         }
+        
+        function clearQrCodeAndHideDownload() {
+            qrContainer.innerHTML = "";
+            downloadBtn.classList.add('hidden');
+            generateBtn.classList.remove('hidden');
+            checkInputAndToggleGenerateButton();
+        }
 
-        // Function to switch input fields based on QR type selection
         function switchQrTypeInputs() {
             textUrlInputDiv.classList.add('hidden');
             wifiInputDiv.classList.add('hidden');
@@ -528,16 +507,11 @@
                 instagramInputDiv.classList.remove('hidden');
             }
             
-            // Clear previous QR code, hide download button, dan perbarui status tombol 'Hasilkan'
-            qrContainer.innerHTML = "";
-            downloadBtn.classList.add('hidden');
-            checkInputAndToggleGenerateButton();
+            clearQrCodeAndHideDownload();
         }
 
-        // Function to check the input fields and toggle the 'Generate' button
         function checkInputAndToggleGenerateButton() {
             let hasInput = false;
-            // Periksa input yang sesuai dengan jenis QR Code yang sedang aktif
             if (currentQrType === 'text-url' && qrText.value.trim().length > 0) {
                 hasInput = true;
             } else if (currentQrType === 'wifi' && wifiSsid.value.trim().length > 0) {
@@ -564,99 +538,87 @@
                 generateBtn.classList.add('hidden');
             }
         }
+        
+        advancedSettingsToggle.addEventListener('click', () => {
+            const isHidden = advancedSettings.style.display === 'none' || advancedSettings.style.display === '';
+            advancedSettings.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) {
+                advancedSettingsToggle.classList.add('advanced-open');
+            } else {
+                advancedSettingsToggle.classList.remove('advanced-open');
+            }
+        });
 
-
-        // Add event listeners for QR type select dropdown
         qrTypeSelect.addEventListener('change', (e) => {
             currentQrType = e.target.value;
             switchQrTypeInputs();
         });
 
-        // Event listener for background type select dropdown
         backgroundTypeSelect.addEventListener('change', (e) => {
             currentBackgroundType = e.target.value;
             if (currentBackgroundType === 'colored') {
                 backgroundColorPicker.style.display = 'flex';
                 colorLight = colorLightInput.value;
-            } else { // transparent
+            } else {
                 backgroundColorPicker.style.display = 'none';
                 colorLight = "#ffffff00";
             }
+            clearQrCodeAndHideDownload();
         });
 
-        // Event listener for generate button
         generateBtn.addEventListener('click',(e)=>{
             e.preventDefault();
             generateQrCodeBasedOnType();
         });
 
-        // Event listener for size change
         sizes.addEventListener('change',(e)=>{
             size = e.target.value;
+            clearQrCodeAndHideDownload();
         });
 
-        // Event listener for dark color change
         colorDarkInput.addEventListener('change',(e)=>{
             colorDark = e.target.value;
+            clearQrCodeAndHideDownload();
         });
 
-        // Event listener for light color change (background)
         colorLightInput.addEventListener('change',(e)=>{
             colorLight = e.target.value;
+            clearQrCodeAndHideDownload();
         });
 
-        // Function to get current date in YYYY-MM-DD format
-        function getCurrentDateFormatted() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-        // Event listener for download button
         downloadBtn.addEventListener('click', ()=>{
-            let img = document.querySelector('.qr-body img');
-            const date = getCurrentDateFormatted();
-            const filename = `hasil-download-${date}.png`;
+            const canvas = qrContainer.querySelector('canvas');
+            
+            if (canvas) {
+                const dataURL = canvas.toDataURL('image/png');
+                const filename = `qr-code${Date.now()}.png`;
 
-            if(img !== null){
-                let imgAtrr = img.getAttribute('src');
-                downloadBtn.setAttribute("href", imgAtrr);
-                downloadBtn.setAttribute("download", filename);
-            }
-            else{
-                const canvas = document.querySelector('canvas');
-                if (canvas) {
-                    downloadBtn.setAttribute("href", canvas.toDataURL());
-                    downloadBtn.setAttribute("download", filename);
-                } else {
-                    showMessage("Harap hasilkan kode QR terlebih dahulu.");
-                    downloadBtn.removeAttribute("href");
-                    downloadBtn.removeAttribute("download");
-                }
-            }
+                const a = document.createElement('a');
+                a.href = dataURL;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
 
-            // Hapus QR code dan sembunyikan tombol unduh setelah diunduh
-            setTimeout(() => {
-                qrContainer.innerHTML = "";
-                downloadBtn.classList.add('hidden');
-                checkInputAndToggleGenerateButton();
-            }, 100);
+                setTimeout(() => {
+                    qrContainer.innerHTML = "";
+                    downloadBtn.classList.add('hidden');
+                    generateBtn.classList.remove('hidden');
+                    checkInputAndToggleGenerateButton();
+                }, 100);
+            } else {
+                showMessage("Harap hasilkan kode QR terlebih dahulu.");
+            }
         });
 
-        // Main function to generate QR code based on selected type
         function generateQrCodeBasedOnType() {
             let qrData = '';
             let isInputValid = true;
 
-            // Hide any previous messages
             messageBox.style.display = 'none';
 
             if (currentQrType === 'text-url') {
-                // Get the value from the textarea and sanitize it
                 const rawData = qrText.value;
-                // Hapus karakter non-ASCII dan spasi di awal/akhir
                 qrData = rawData.replace(/[^\x20-\x7E\s]/g, '').trim();
 
                 if (qrData.length === 0) {
@@ -776,38 +738,26 @@
                     colorDark: colorDark,
                 });
                 downloadBtn.classList.remove('hidden');
+                generateBtn.classList.add('hidden');
             } else {
                 qrContainer.innerHTML = "";
                 downloadBtn.classList.add('hidden');
+                generateBtn.classList.remove('hidden');
             }
         }
 
-        // Initialize input fields visibility on load
         switchQrTypeInputs();
 
-        // --- Perubahan Baru: Event Listeners untuk Toggle Tombol 'Hasilkan' ---
+        const inputElements = [qrText, wifiSsid, wifiPassword, phoneNumber, contactName, contactPhone, contactEmail, geoLatitude, geoLongitude, geoAltitude, smsNumber, smsMessage, emailTo, emailSubject, emailBody, whatsappNumber, whatsappMessage, instagramUsername];
+        
+        const clearTriggerElements = [qrTypeSelect, sizes, colorDarkInput, backgroundTypeSelect, colorLightInput, ...inputElements];
+        clearTriggerElements.forEach(element => {
+            if (element) {
+                element.addEventListener('input', clearQrCodeAndHideDownload);
+                element.addEventListener('change', clearQrCodeAndHideDownload);
+            }
+        });
 
-        // Pasangkan event listener 'input' ke semua elemen input teks yang relevan
-        qrText.addEventListener('input', checkInputAndToggleGenerateButton);
-        wifiSsid.addEventListener('input', checkInputAndToggleGenerateButton);
-        wifiPassword.addEventListener('input', checkInputAndToggleGenerateButton);
-        phoneNumber.addEventListener('input', checkInputAndToggleGenerateButton);
-        contactName.addEventListener('input', checkInputAndToggleGenerateButton);
-        contactPhone.addEventListener('input', checkInputAndToggleGenerateButton);
-        contactEmail.addEventListener('input', checkInputAndToggleGenerateButton);
-        geoLatitude.addEventListener('input', checkInputAndToggleGenerateButton);
-        geoLongitude.addEventListener('input', checkInputAndToggleGenerateButton);
-        geoAltitude.addEventListener('input', checkInputAndToggleGenerateButton);
-        smsNumber.addEventListener('input', checkInputAndToggleGenerateButton);
-        smsMessage.addEventListener('input', checkInputAndToggleGenerateButton);
-        emailTo.addEventListener('input', checkInputAndToggleGenerateButton);
-        emailSubject.addEventListener('input', checkInputAndToggleGenerateButton);
-        emailBody.addEventListener('input', checkInputAndToggleGenerateButton);
-        whatsappNumber.addEventListener('input', checkInputAndToggleGenerateButton);
-        whatsappMessage.addEventListener('input', checkInputAndToggleGenerateButton);
-        instagramUsername.addEventListener('input', checkInputAndToggleGenerateButton);
-
-        // Panggil fungsi ini saat halaman dimuat untuk memastikan status tombol yang benar
         checkInputAndToggleGenerateButton();
     </script>
 </body>
